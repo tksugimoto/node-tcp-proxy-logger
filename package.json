@@ -1,0 +1,19 @@
+{
+  "name": "tcp-proxy-logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tksugimoto/node-tcp-proxy-logger.git"
+  },
+  "author": "tksugimoto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tksugimoto/node-tcp-proxy-logger/issues"
+  },
+  "homepage": "https://github.com/tksugimoto/node-tcp-proxy-logger#readme"
+}
