@@ -22,14 +22,14 @@ tcpProxyServer.on('connection', (clientSocket) => {
     serverSocket.once('connect', () => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
-        serverSocket.on('data', chunk => {
+        serverSocket.on('data', () => {
             console.info('------------- server -> client -------------');
-            console.info(chunk.toString());
         });
-        clientSocket.on('data', chunk => {
+        serverSocket.pipe(process.stdout);
+        clientSocket.on('data', () => {
             console.info('------------- client -> server -------------');
-            console.info(chunk.toString());
         });
+        clientSocket.pipe(process.stdout);
     });
     serverSocket.on('error', err => {
         clientSocket.end(err.message);
