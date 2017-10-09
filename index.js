@@ -78,9 +78,19 @@ tcpProxyServer.on('connection', (clientSocket) => {
     });
     serverSocket.on('error', err => {
         clientSocket.end(err.message);
+        console.warn({
+            type: 'serverSocket.error',
+            time: new Date(),
+            err,
+        });
     });
-    clientSocket.on('error', () => {
+    clientSocket.on('error', err => {
         serverSocket.destroy();
+        console.warn({
+            type: 'clientSocket.error',
+            time: new Date(),
+            err,
+        });
     });
     if (logEnabled) {
         clientSocket.on('close', () => {
