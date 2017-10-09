@@ -15,6 +15,8 @@ assert(REMOTE_PORT, 'remote port number required.');
 
 const LOCAL_PORT = Number(process.argv[3]) || 0;
 
+const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
+
 const tcpProxyServer = net.createServer();
 
 tcpProxyServer.on('connection', (clientSocket) => {
@@ -22,6 +24,16 @@ tcpProxyServer.on('connection', (clientSocket) => {
     serverSocket.once('connect', () => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
+        if (logEnabled) {
+            serverSocket.on('data', () => {
+                console.info('------------- server -> client -------------');
+            });
+            serverSocket.pipe(process.stdout);
+            clientSocket.on('data', () => {
+                console.info('------------- client -> server -------------');
+            });
+            clientSocket.pipe(process.stdout);
+        }
     });
     serverSocket.on('error', err => {
         clientSocket.end(err.message);
