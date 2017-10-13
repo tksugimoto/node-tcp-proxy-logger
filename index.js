@@ -42,6 +42,11 @@ const {
 
 const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
 
+const currentTime = () => {
+    const date = new Date();
+    return date.toLocaleString();
+};
+
 const tcpProxyServer = net.createServer();
 
 tcpProxyServer.on('connection', (clientSocket) => {
@@ -51,11 +56,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
             serverSocket.on('data', () => {
-                console.info('------------- server -> client -------------');
+                console.info(`------------- server -> client ------------- (${currentTime()})`);
             });
             serverSocket.pipe(process.stdout);
             clientSocket.on('data', () => {
-                console.info('------------- client -> server -------------');
+                console.info(`------------- client -> server ------------- (${currentTime()})`);
             });
             clientSocket.pipe(process.stdout);
         }
