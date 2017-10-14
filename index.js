@@ -58,11 +58,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
             serverSocket.on('data', () => {
-                console.info(`------------- server(${serverHostOf(serverSocket)}) -> client(${clientSocket.remoteAddress}) ------------- (${currentTime()})`);
+                console.info(`\n------------- server(${serverHostOf(serverSocket)}) -> client(${clientSocket.remoteAddress}) ------------- (${currentTime()})`);
             });
             serverSocket.pipe(process.stdout);
             clientSocket.on('data', () => {
-                console.info(`------------- client(${clientSocket.remoteAddress}) -> server(${serverHostOf(serverSocket)}) ------------- (${currentTime()})`);
+                console.info(`\n------------- client(${clientSocket.remoteAddress}) -> server(${serverHostOf(serverSocket)}) ------------- (${currentTime()})`);
             });
             clientSocket.pipe(process.stdout);
         }
