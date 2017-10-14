@@ -2,8 +2,8 @@ const assert = require('assert');
 const net = require('net');
 const {
     parse: parseUrl,
- } = require('url');
- 
+} = require('url');
+
 assert(process.argv[2], 'remote address("hostname:port") required.');
 
 const {
