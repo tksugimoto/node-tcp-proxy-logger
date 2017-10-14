@@ -42,6 +42,8 @@ const {
 
 const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
 
+const serverHostOf = socket => `${socket.remoteAddress}:${socket.remotePort}`;
+
 const currentTime = () => {
     const date = new Date();
     return date.toLocaleString();
@@ -56,11 +58,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
             serverSocket.on('data', () => {
-                console.info(`------------- server -> client ------------- (${currentTime()})`);
+                console.info(`------------- server(${serverHostOf(serverSocket)}) -> client(${clientSocket.remoteAddress}) ------------- (${currentTime()})`);
             });
             serverSocket.pipe(process.stdout);
             clientSocket.on('data', () => {
-                console.info(`------------- client -> server ------------- (${currentTime()})`);
+                console.info(`------------- client(${clientSocket.remoteAddress}) -> server(${serverHostOf(serverSocket)}) ------------- (${currentTime()})`);
             });
             clientSocket.pipe(process.stdout);
         }
