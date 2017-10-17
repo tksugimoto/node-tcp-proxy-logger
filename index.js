@@ -44,7 +44,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
 });
 
 tcpProxyServer.on('listening', () => {
-    console.info(`TCP server started. (IP:port = ${tcpProxyServer.address().address}:${tcpProxyServer.address().port})`);
+    const {
+        address,
+        port,
+    } = tcpProxyServer.address();
+    console.info(`TCP server started. (IP:port = ${address}:${port})`);
     console.info(`transport to ${REMOTE_HOSTNAME}:${REMOTE_PORT}`);
 });
 
