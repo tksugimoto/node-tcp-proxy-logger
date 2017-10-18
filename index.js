@@ -13,7 +13,16 @@ const {
 
 assert(REMOTE_PORT, 'remote port number required.');
 
-const LOCAL_PORT = Number(process.argv[3]) || 0;
+const parseLocalBindInfo = (arg) => {
+    const port = Number(arg) || 0;
+    return {
+        port,
+    };
+};
+
+const {
+    port: LOCAL_PORT,
+ } = parseLocalBindInfo(process.argv[3]);
 
 const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
 
