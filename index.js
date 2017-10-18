@@ -9,7 +9,7 @@ assert(process.argv[2], 'remote address("hostname:port") required.');
 const {
     hostname: REMOTE_HOSTNAME,
     port: REMOTE_PORT,
-} = parseUrl(`http://${process.argv[2] || 'localhost'}`);
+} = parseUrl(`http://${process.argv[2]}`);
 
 assert(REMOTE_PORT, 'remote port number required.');
 
