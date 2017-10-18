@@ -14,13 +14,29 @@ const {
 assert(REMOTE_PORT, 'remote port number required.');
 
 const parseLocalBindInfo = (arg) => {
-    const port = Number(arg) || 0;
+    if (arg === 'log') {
+        return {
+            port: 0,
+        };
+    }
+    if (/^\d+$/.test(arg)) {
+        const port = Number(arg) || 0;
+        return {
+            port,
+        };
+    }
+    const {
+        hostname,
+        port,
+    } = parseUrl(`http://${arg}`);
     return {
+        hostname,
         port,
     };
 };
 
 const {
+    hostname: LOCAL_HOSTNAME,
     port: LOCAL_PORT,
  } = parseLocalBindInfo(process.argv[3]);
 
@@ -61,4 +77,4 @@ tcpProxyServer.on('listening', () => {
     console.info(`transport to ${REMOTE_HOSTNAME}:${REMOTE_PORT}`);
 });
 
-tcpProxyServer.listen(LOCAL_PORT);
+tcpProxyServer.listen(LOCAL_PORT, LOCAL_HOSTNAME);
