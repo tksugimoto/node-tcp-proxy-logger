@@ -31,7 +31,7 @@ const parseLocalBindInfo = (arg) => {
     } = parseUrl(`http://${arg}`);
     return {
         hostname,
-        port,
+        port: port || 0,
     };
 };
 
