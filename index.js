@@ -51,11 +51,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
             serverSocket.on('data', () => {
-                console.info(`\n------------- server -> client (client: ${clientSocket.remoteAddress}) -------------`);
+                console.info(`\n------------- server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort}) -------------`);
             });
             serverSocket.pipe(process.stdout);
             clientSocket.on('data', () => {
-                console.info(`\n------------- client -> server (client: ${clientSocket.remoteAddress}) -------------`);
+                console.info(`\n------------- client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort}) -------------`);
             });
             clientSocket.pipe(process.stdout);
         }
