@@ -62,20 +62,18 @@ tcpProxyServer.on('connection', (clientSocket) => {
         log(`new connection (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
     }
     const serverSocket = net.createConnection(REMOTE_PORT, REMOTE_HOSTNAME);
-    serverSocket.once('connect', () => {
-        clientSocket.pipe(serverSocket);
-        serverSocket.pipe(clientSocket);
-        if (logEnabled) {
-            serverSocket.on('data', () => {
-                log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
-            });
-            serverSocket.pipe(process.stdout);
-            clientSocket.on('data', () => {
-                log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
-            });
-            clientSocket.pipe(process.stdout);
-        }
-    });
+    clientSocket.pipe(serverSocket);
+    serverSocket.pipe(clientSocket);
+    if (logEnabled) {
+        serverSocket.on('data', () => {
+            log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        });
+        serverSocket.pipe(process.stdout);
+        clientSocket.on('data', () => {
+            log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        });
+        clientSocket.pipe(process.stdout);
+    }
     serverSocket.on('error', err => {
         clientSocket.end(err.message);
     });
