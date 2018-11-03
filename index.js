@@ -58,6 +58,9 @@ const log = text => {
 const tcpProxyServer = net.createServer();
 
 tcpProxyServer.on('connection', (clientSocket) => {
+    if (logEnabled) {
+        log(`new connection (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+    }
     const serverSocket = net.createConnection(REMOTE_PORT, REMOTE_HOSTNAME);
     serverSocket.once('connect', () => {
         clientSocket.pipe(serverSocket);
