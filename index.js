@@ -42,20 +42,36 @@ const {
 
 const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
 
+const currentTime = () => {
+    const date = new Date();
+    const h = date.getHours();
+    const m = date.getMinutes();
+    const s = date.getSeconds();
+    const ms = date.getMilliseconds();
+    return `${h}:${m}:${s}.${ms}`;
+};
+
+const log = text => {
+    console.info(`\n[${currentTime()}] ------------- ${text} -------------`);
+};
+
 const tcpProxyServer = net.createServer();
 
 tcpProxyServer.on('connection', (clientSocket) => {
+    if (logEnabled) {
+        log(`new connection (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+    }
     const serverSocket = net.createConnection(REMOTE_PORT, REMOTE_HOSTNAME);
     serverSocket.once('connect', () => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
             serverSocket.on('data', () => {
-                console.info(`\n------------- server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort}) -------------`);
+                log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
             });
             serverSocket.pipe(process.stdout);
             clientSocket.on('data', () => {
-                console.info(`\n------------- client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort}) -------------`);
+                log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
             });
             clientSocket.pipe(process.stdout);
         }
@@ -66,6 +82,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
     clientSocket.on('error', () => {
         serverSocket.destroy();
     });
+    if (logEnabled) {
+        clientSocket.on('close', () => {
+            log(`connection closed (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        });
+    }
 });
 
 tcpProxyServer.on('listening', () => {
