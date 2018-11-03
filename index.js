@@ -82,6 +82,11 @@ tcpProxyServer.on('connection', (clientSocket) => {
     clientSocket.on('error', () => {
         serverSocket.destroy();
     });
+    if (logEnabled) {
+        clientSocket.on('close', () => {
+            log(`connection closed (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        });
+    }
 });
 
 tcpProxyServer.on('listening', () => {
