@@ -40,7 +40,7 @@ const {
     port: LOCAL_PORT,
  } = parseLocalBindInfo(process.argv[3]);
 
-const logEnabled = process.argv[3] === 'log' || process.argv[4] === 'log';
+const logEnabled = true;
 
 const currentTime = () => {
     const date = new Date();
@@ -66,25 +66,31 @@ tcpProxyServer.on('connection', (clientSocket) => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
-            serverSocket.on('data', () => {
+            const length = 50;
+            serverSocket.on('data', (data) => {
                 log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                console.log(`${data.toString().slice(0, length)}`);
             });
-            serverSocket.pipe(process.stdout);
-            clientSocket.on('data', () => {
+            clientSocket.on('data', (data) => {
                 log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                console.log(`${data.toString().slice(0, length)}`);
             });
-            clientSocket.pipe(process.stdout);
         }
     });
     serverSocket.on('error', err => {
         clientSocket.end(err.message);
     });
-    clientSocket.on('error', () => {
+    clientSocket.on('error', (err) => {
+        log('clientSocket.on(error, (err)');
+        console.error(err);
         serverSocket.destroy();
     });
     if (logEnabled) {
-        clientSocket.on('close', () => {
-            log(`connection closed (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        serverSocket.on('close', (hadError) => {
+            log(`serverSocket connection closed (hadError: ${hadError}) (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+        });
+        clientSocket.on('close', (hadError) => {
+            log(`clientSocket connection closed (hadError: ${hadError}) (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
         });
     }
 });
