@@ -69,12 +69,12 @@ tcpProxyServer.on('connection', (clientSocket) => {
             const length = 50;
             serverSocket.on('data', (data) => {
                 log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
-                console.log(`${data.toString().slice(0, length)}`);
             });
+            serverSocket.pipe(process.stdout);
             clientSocket.on('data', (data) => {
                 log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
-                console.log(`${data.toString().slice(0, length)}`);
             });
+            clientSocket.pipe(process.stdout);
         }
     });
     serverSocket.on('error', err => {
