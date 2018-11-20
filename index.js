@@ -92,6 +92,12 @@ tcpProxyServer.on('connection', (clientSocket) => {
         clientSocket.on('close', (hadError) => {
             log(`clientSocket connection closed (hadError: ${hadError}) (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
         });
+        serverSocket.on('end', () => {
+            log('serverSocket connection end');
+        });
+        clientSocket.on('end', () => {
+            log('clientSocket connection end');
+        });
     }
 });
 
