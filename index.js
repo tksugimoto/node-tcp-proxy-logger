@@ -66,14 +66,20 @@ tcpProxyServer.on('connection', (clientSocket) => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
-            serverSocket.on('data', () => {
+            serverSocket.on('data', data => {
                 log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                data = data.toString();
+                if (data.match(/HTTP|<title>|<body/)) {
+                   console.log(`${data.slice(0, 200)}`);
+                }
             });
-            serverSocket.pipe(process.stdout);
-            clientSocket.on('data', () => {
+            clientSocket.on('data', data => {
                 log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                data = data.toString();
+                if (data.match(/HTTP/)) {
+                   console.log(`${data.slice(0, 300)}`);
+                }
             });
-            clientSocket.pipe(process.stdout);
         }
     });
     serverSocket.on('error', err => {
