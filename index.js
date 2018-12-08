@@ -78,6 +78,7 @@ tcpProxyServer.on('connection', (clientSocket) => {
         }
     });
     serverSocket.on('error', err => {
+        log(`serverSocket.on('error', ${err}`);
         clientSocket.end(err.message);
     });
     clientSocket.on('error', (err) => {
