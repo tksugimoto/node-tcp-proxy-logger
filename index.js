@@ -1,5 +1,6 @@
 const assert = require('assert');
 const net = require('net');
+const util = require('util');
 const {
     parse: parseUrl,
 } = require('url');
@@ -66,12 +67,20 @@ tcpProxyServer.on('connection', (clientSocket) => {
         clientSocket.pipe(serverSocket);
         serverSocket.pipe(clientSocket);
         if (logEnabled) {
-            serverSocket.on('data', () => {
+            serverSocket.on('data', (data) => {
                 log(`server -> client (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                console.log(util.inspect(data.toJSON(), {
+                    maxArrayLength: 15,
+                    showHidden: true,
+                }));
             });
             serverSocket.pipe(process.stdout);
-            clientSocket.on('data', () => {
+            clientSocket.on('data', (data) => {
                 log(`client -> server (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
+                console.log(util.inspect(data.toJSON(), {
+                    maxArrayLength: 15,
+                    showHidden: true,
+                }));
             });
             clientSocket.pipe(process.stdout);
         }
