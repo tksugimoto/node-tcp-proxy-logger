@@ -1,4 +1,5 @@
 const assert = require('assert');
+const http = require('http');
 const net = require('net');
 const {
     parse: parseUrl,
@@ -55,6 +56,8 @@ const log = text => {
     console.info(`\n[${currentTime()}] ------------- ${text} -------------`);
 };
 
+let connections = [];
+
 const tcpProxyServer = net.createServer();
 
 tcpProxyServer.on('connection', (clientSocket) => {
@@ -87,6 +90,16 @@ tcpProxyServer.on('connection', (clientSocket) => {
             log(`connection closed (client: ${clientSocket.remoteAddress}:${clientSocket.remotePort})`);
         });
     }
+    connections.push({
+        clientSocket,
+        serverSocket,
+    });
+    clientSocket.on('close', () => {
+        connections = connections.filter(connection => connection.clientSocket !== clientSocket);
+    });
+    serverSocket.on('close', () => {
+        connections = connections.filter(connection => connection.serverSocket !== serverSocket);
+    });
 });
 
 tcpProxyServer.on('listening', () => {
@@ -99,3 +112,24 @@ tcpProxyServer.on('listening', () => {
 });
 
 tcpProxyServer.listen(LOCAL_PORT, LOCAL_HOSTNAME);
+
+const httpServer = http.createServer();
+httpServer.on('request', (req, res) => {
+    if (req.url.startsWith('/kill')) {
+        connections.forEach(({ clientSocket, serverSocket }) => {
+            clientSocket.end();
+            serverSocket.end();
+        });
+        res.end(`${connections.length} connection was killed.`);
+    } else {
+        res.end(`${connections.length} connection is alive.`);
+    }
+});
+httpServer.on('listening', () => {
+    const {
+        address,
+        port,
+    } = httpServer.address();
+    console.info(`HTTP server started. http://${address}:${port}/kill`);
+});
+httpServer.listen(18080, '127.5.5.5');
